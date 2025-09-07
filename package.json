@@ -1,0 +1,26 @@
+{
+  "name": "chat-tiempo-real",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owenunda/chat-realTime.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owenunda/chat-realTime/issues"
+  },
+  "homepage": "https://github.com/owenunda/chat-realTime#readme",
+  "dependencies": {
+    "express": "5.1.0",
+    "morgan": "1.10.1"
+  }
+}
