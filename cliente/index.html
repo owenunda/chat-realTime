@@ -21,7 +21,7 @@
       display: grid;
       place-content: center;
       height: 100vh;
-      padding: 36px 36px 100px 36px;
+      padding: 14px 36px 14px 36px;
       grid-template-rows: 1fr;
     }
 
@@ -97,9 +97,32 @@
   </section>
 
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-  <script>
+  <script type="module">
+    const getUsername = async() =>{
+      const username = localStorage.getItem('username')
+
+      if(username){
+        console.log(`user existed : ${username}`);
+        return username
+      }
+
+      const res = await fetch("https://api.api-ninjas.com/v1/randomuser", {
+        method: "GET",
+        headers: {
+          "X-Api-Key": "NQohlfgPxue+g3ZI767sDw==ice0tz2GcHzZEjsq"
+        }
+      })
+      const {username: randomuser} = await res.json()
+      
+      localStorage.setItem('username', randomuser)
+      return username
+      
+    }
+    
+    
     const socket = io({
       auth:{
+        username: await getUsername(),
         serverOffset: 0
       }
     })
@@ -108,11 +131,15 @@
     const input = document.getElementById('input')
     const messages = document.getElementById('messages')
 
-
-    socket.on('chat message', (msg, serverOffset)=>{
-      const item = `<li>${msg}</li>`
+  
+    socket.on('chat message', (msg, serverOffset, username)=>{
+      const item = `<li>
+        <p>${msg}</p>
+        <small>${username}</small></li>`
       messages.insertAdjacentHTML('beforeend', item)
       socket.auth.serverOffset = serverOffset
+      // scroll to botton of messages
+      messages.scrollTop = messages.scrollHeight
     })
 
     form.addEventListener('submit', (e)=>{
