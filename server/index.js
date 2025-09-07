@@ -8,13 +8,19 @@ const port = process.env.PORT ?? 3000
 
 const app = express()
 const server = createServer(app)
-const io = new Server(server)
+const io = new Server(server,{
+  connectionStateRecovery:{ }
+})
 
 io.on('connection', (socket)=>{
-  console.log('a user has connected - index.js:14')
+  console.log('a user has connected')
   
   socket.on('disconnect', ()=>{
-    console.log('an user has disconnected - index.js:17');
+    console.log('an user has disconnected');
+  })
+
+  socket.on('chat message', (msg)=>{
+    io.emit('chat message', msg)
   })
 })
 
@@ -25,5 +31,5 @@ app.get('/', (req, res) => {
 })
 
 server.listen(port, ()=>{
-  console.log(`Server running on port ${port} - index.js:28`);
+  console.log(`Server running on port ${port} - index.js:32`);
 })

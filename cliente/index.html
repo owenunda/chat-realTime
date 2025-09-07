@@ -89,6 +89,7 @@
 </head>
 <body>
   <section id="chat">
+    <ul id="messages"></ul>
     <form id="form">
       <input type="text" name="message" id="input" placeholder="Escribe tu mensaje" autocomplete="off">
       <button type="submit">Enviar</button>
@@ -101,6 +102,13 @@
 
     const form = document.getElementById('form')
     const input = document.getElementById('input')
+    const messages = document.getElementById('messages')
+
+
+    socket.on('chat message', (msg)=>{
+      const item = `<li>${msg}</li>`
+      messages.insertAdjacentHTML('beforeend', item)
+    })
 
     form.addEventListener('submit', (e)=>{
       e.preventDefault()
