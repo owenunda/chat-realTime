@@ -30,15 +30,16 @@ await db.execute(`
   `)
 
 io.on('connection', async(socket)=>{
-  console.log('a user has connected')
+  console.log('a user has connected - index.js:33')
   
   socket.on('disconnect', ()=>{
-    console.log('an user has disconnected');
+    console.log('an user has disconnected - index.js:36');
   })
 
   socket.on('chat message', async (msg)=>{
     let result
     const username = socket.handshake.auth.username ?? 'anonymous'
+    console.log(socket.handshake.auth.username);
     try {
 
       result = await db.execute({
@@ -72,9 +73,9 @@ io.on('connection', async(socket)=>{
 app.use(logger('dev'))
 
 app.get('/', (req, res) => {
-  res.sendFile(process.cwd() + '/cliente/index.html')
+  res.sendFile(process.cwd() + '/client/index.html')
 })
 
 server.listen(port, ()=>{
-  console.log(`Server running on port ${port} `);
+  console.log(`Server running on port ${port} - index.js:80`);
 })
