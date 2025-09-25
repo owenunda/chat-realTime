@@ -1,155 +1,180 @@
-# OuChat 💬
+# OuChat Realtime
 
-Una aplicación de chat en tiempo real construida con Node.js, Socket.io y Turso (LibSQL). Los usuarios pueden enviar mensajes instantáneamente y ver mensajes de otros usuarios conectados en tiempo real.
+OuChat Realtime es una aplicación de chat en tiempo real desarrollada con Node.js, Socket.io y Firebase. Permite a los usuarios comunicarse de forma instantánea a través de mensajes públicos y privados, con autenticación segura y persistencia de datos.
 
-## ✨ Características
+## Características principales
 
-- **Chat en tiempo real**: Mensajes instantáneos usando WebSockets
-- **Persistencia de datos**: Los mensajes se almacenan en una base de datos Turso
-- **Recuperación de conexión**: Los mensajes perdidos durante desconexiones se recuperan automáticamente
-- **Nombres de usuario automáticos**: Generación automática de nombres usando la API de API-Ninjas
-- **Interfaz moderna**: Diseño limpio y responsive
-- **Historial completo**: Acceso a todos los mensajes anteriores al conectarse
+Esta aplicación ofrece un sistema de chat completo con las siguientes funcionalidades:
 
-## 🛠️ Tecnologías
+**Comunicación en tiempo real**: Los mensajes se transmiten instantáneamente entre todos los usuarios conectados utilizando WebSockets a través de Socket.io, garantizando una experiencia de chat fluida y sin demoras.
 
-- **Backend**: Node.js, Express.js
-- **WebSockets**: Socket.io
-- **Base de datos**: Turso (LibSQL)
-- **Frontend**: HTML5, CSS3, JavaScript vanilla
-- **API externa**: API-Ninjas para generación de nombres de usuario
+**Autenticación segura**: El sistema de autenticación utiliza Firebase Authentication, permitiendo a los usuarios registrarse e iniciar sesión tanto con email y contraseña como con su cuenta de Google. Todas las sesiones están protegidas con tokens JWT.
 
-## 📋 Requisitos previos
+**Chat público y privado**: Los usuarios pueden participar en conversaciones públicas donde todos pueden ver los mensajes, o iniciar chats privados uno a uno con cualquier usuario conectado.
 
-- Node.js (versión 18 o superior)
-- Una cuenta en [Turso](https://turso.tech/)
-- Clave de API de [API-Ninjas](https://api.api-ninjas.com/) (opcional, para nombres automáticos)
+**Persistencia de mensajes**: Todos los mensajes se almacenan en Firebase Realtime Database, permitiendo que los usuarios vean el historial de conversaciones cuando se conectan.
 
-## 🚀 Instalación y configuración
+**Lista de usuarios en tiempo real**: La aplicación muestra en tiempo real qué usuarios están conectados, su estado de conexión y permite iniciar conversaciones privadas con un solo clic.
 
-1. **Clona el repositorio:**
+**Interfaz unificada**: La aplicación cuenta con una interfaz moderna y responsive que combina el login y el chat en una sola página, detectando automáticamente el estado de autenticación del usuario.
+
+**Mantenimiento automático**: El sistema incluye una función de auto-limpieza que elimina automáticamente los mensajes después de 24 horas, ejecutándose cada hora para mantener la base de datos optimizada.
+
+## Tecnologías utilizadas
+
+### Backend
+- **Node.js con Express.js**: Servidor web que maneja las peticiones HTTP y sirve la aplicación cliente.
+- **Socket.io**: Biblioteca que implementa WebSockets para comunicación bidireccional en tiempo real entre cliente y servidor.
+- **Firebase Admin SDK**: Permite la integración con los servicios de Firebase desde el servidor, incluyendo autenticación y base de datos.
+- **Morgan**: Middleware para logging de peticiones HTTP, útil para monitoreo y debugging.
+
+### Frontend
+- **HTML5, CSS3 y JavaScript ES6+**: Tecnologías web estándar para crear la interfaz de usuario interactiva y responsive.
+- **Firebase Web SDK**: Cliente JavaScript para integración con Firebase Authentication y Realtime Database desde el navegador.
+- **Socket.io Client**: Cliente WebSocket que se conecta con el servidor Socket.io para recibir mensajes en tiempo real.
+
+### Servicios Firebase
+- **Firebase Realtime Database**: Base de datos NoSQL en tiempo real que sincroniza automáticamente los datos entre todos los clientes conectados.
+- **Firebase Authentication**: Servicio de autenticación que maneja el registro, login y gestión de sesiones de usuarios.
+
+## Instalación y configuración
+
+### Prerrequisitos
+- Node.js versión 18 o superior instalado en el sistema
+- Una cuenta de Firebase con un proyecto creado
+- Git para clonar el repositorio
+
+### Pasos de instalación
+
+1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/owenunda/chat-realTime.git
    cd chat-realTime
    ```
 
-2. **Instala las dependencias:**
+2. **Instalar dependencias**
    ```bash
    npm install
    ```
 
-3. **Configura las variables de entorno:**
-   
-   Crea un archivo `.env` en la raíz del proyecto:
-   ```env
-   PORT=3000
-   DB_TOKEN=tu_token_de_turso_aqui
+3. **Configurar Firebase**
+   - Crear un proyecto en Firebase Console
+   - Habilitar Authentication (Email/Password y Google)
+   - Crear una Realtime Database
+   - Generar una clave de cuenta de servicio desde Project Settings > Service Accounts
+   - Descargar el archivo JSON de credenciales
+
+4. **Configurar variables de entorno**
+   Crear un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+   ```
+   FIREBASE_SERVICE_ACCOUNT_KEY={"type":"service_account","project_id":"tu-proyecto"...}
+   PORT=3001
    ```
 
-4. **Configura la base de datos Turso:**
-   - Crea una cuenta en [Turso](https://turso.tech/)
-   - Crea una nueva base de datos
-   - Obtén tu token de autenticación
-   - Actualiza la URL de la base de datos en `server/index.js` si es necesario
-
-## 🎯 Uso
-
-1. **Inicia el servidor en modo desarrollo:**
+5. **Iniciar la aplicación**
    ```bash
-   npm run dev
+   npm start
    ```
 
-2. **Abre tu navegador y visita:**
-   ```
-   http://localhost:3000
-   ```
+6. **Acceder a la aplicación**
+   Abrir el navegador en `http://localhost:3001`
 
-3. **¡Comienza a chatear!**
-   - Tu nombre de usuario se generará automáticamente
-   - Escribe mensajes en el campo de texto
-   - Presiona Enter o haz clic en "Enviar"
-   - Ve mensajes de otros usuarios en tiempo real
-
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 chat-realTime/
-├── cliente/
-│   └── index.html          # Frontend del chat
+├── client/
+│   └── index.html          # Aplicación frontend completa (login + chat)
 ├── server/
-│   └── index.js           # Servidor principal
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── README.md
+│   └── realtime-server.js  # Servidor backend con Socket.io y Firebase
+├── package.json            # Dependencias y scripts de npm
+├── .env                    # Variables de entorno (no incluido en git)
+├── .gitignore             # Archivos y carpetas ignoradas por git
+└── README.md              # Este archivo de documentación
 ```
 
-## 🔧 Scripts disponibles
+## Funcionamiento interno
 
-- `npm run dev`: Inicia el servidor en modo desarrollo con auto-reload
-- `npm start`: Inicia el servidor en modo producción (requiere definir el script)
+### Arquitectura de la aplicación
 
-## 🌐 Características técnicas
+La aplicación sigue una arquitectura cliente-servidor donde:
 
-### Backend
-- **Express.js**: Servidor web y API REST
-- **Socket.io**: Comunicación en tiempo real bidireccional
-- **Morgan**: Logging de peticiones HTTP
-- **Turso/LibSQL**: Base de datos serverless
+**Cliente (Frontend)**: Una aplicación web de página única (SPA) que maneja tanto el proceso de autenticación como la interfaz de chat. Utiliza Firebase Web SDK para autenticación y Socket.io client para comunicación en tiempo real.
 
-### Frontend
-- **WebSockets**: Conexión en tiempo real con el servidor
-- **LocalStorage**: Almacenamiento local del nombre de usuario
-- **API-Ninjas**: Generación automática de nombres de usuario
-- **Diseño responsive**: Compatible con dispositivos móviles
+**Servidor (Backend)**: Un servidor Express.js que integra Socket.io para WebSockets y Firebase Admin SDK para validación de tokens y acceso a la base de datos.
 
-### Base de datos
-```sql
-CREATE TABLE messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  content TEXT,
-  user TEXT
-);
-```
+**Base de datos**: Firebase Realtime Database almacena usuarios, mensajes públicos y mensajes privados en una estructura JSON jerárquica que se sincroniza automáticamente.
 
-## 🔒 Seguridad y mejores prácticas
+### Flujo de autenticación
 
-- Variables de entorno para datos sensibles
-- Validación de entrada en el servidor
-- Manejo de errores robusto
-- Recuperación automática de conexión
+1. El usuario accede a la aplicación y ve la interfaz de login
+2. Puede registrarse o iniciar sesión con email/contraseña o Google
+3. Firebase Authentication genera un token JWT
+4. El token se envía al servidor a través de Socket.io
+5. El servidor valida el token con Firebase Admin SDK
+6. Si es válido, el usuario se registra en la lista de conectados
+7. La interfaz cambia automáticamente al modo chat
 
-## 🤝 Contribuciones
+### Flujo de mensajería
 
-Las contribuciones son bienvenidas. Para contribuir:
+**Mensajes públicos:**
+1. Usuario escribe mensaje en la interfaz
+2. Cliente envía mensaje al servidor vía Socket.io
+3. Servidor guarda el mensaje en Firebase Realtime Database
+4. Firebase dispara evento de nuevo mensaje
+5. Servidor retransmite el mensaje a todos los clientes conectados
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+**Mensajes privados:**
+1. Usuario selecciona otro usuario de la lista
+2. Se crea una sala privada con ID único basado en los IDs de usuarios
+3. Los mensajes se guardan en una sección separada de la base de datos
+4. Solo los participantes de la conversación reciben los mensajes
 
-## 📝 Licencia
+### Sistema de auto-limpieza
 
-Este proyecto está bajo la Licencia ISC. Ve el archivo `LICENSE` para más detalles.
+La aplicación incluye un sistema automatizado de mantenimiento que:
 
-## 🚀 Próximas características
+- Se ejecuta cada hora para revisar mensajes antiguos
+- Elimina automáticamente mensajes con más de 24 horas de antigüedad
+- Aplica tanto a mensajes públicos como privados
+- Registra estadísticas de limpieza en los logs del servidor
+- Mantiene la base de datos optimizada sin intervención manual
 
-- [ ] Salas de chat privadas
-- [ ] Envío de imágenes y archivos
-- [ ] Notificaciones push
-- [ ] Temas personalizables
-- [ ] Moderación de mensajes
-- [ ] Estados de usuario (en línea/ausente)
-- [ ] Mensajes privados entre usuarios
+## Uso de la aplicación
 
-## 📞 Soporte
+### Registro e inicio de sesión
 
-Si tienes alguna pregunta o necesitas ayuda, puedes:
+Los usuarios pueden crear una cuenta nueva o iniciar sesión de dos formas:
 
-- Abrir un issue en GitHub
-- Contactar al desarrollador
+**Email y contraseña**: Permite crear una cuenta personalizada ingresando un email válido y una contraseña segura.
 
----
+**Cuenta de Google**: Utiliza OAuth2 para autenticación rápida con una cuenta de Google existente.
 
-**Desarrollado con ❤️ por [owenunda](https://github.com/owenunda)**
+### Navegación del chat
+
+Una vez autenticado, el usuario tiene acceso a:
+
+**Chat público**: Área principal donde todos los mensajes son visibles para todos los usuarios conectados. Ideal para conversaciones grupales y anuncios generales.
+
+**Chats privados**: Conversaciones uno a uno que se inician haciendo clic en cualquier usuario de la lista de conectados. Los mensajes son privados y solo los participantes pueden verlos.
+
+**Lista de usuarios**: Panel lateral que muestra todos los usuarios conectados en tiempo real, con indicadores de estado de conexión.
+
+### Persistencia y sincronización
+
+Todos los mensajes se guardan automáticamente y están disponibles cuando el usuario se reconecta. La sincronización es instantánea gracias a Firebase Realtime Database, asegurando que todos los usuarios vean los mensajes al mismo tiempo.
+
+## Consideraciones de despliegue
+
+Para un despliegue en producción, considerar:
+
+- Configurar reglas de seguridad en Firebase Realtime Database
+- Implementar rate limiting para prevenir spam
+- Configurar HTTPS para conexiones seguras
+- Establecer variables de entorno en el servidor de producción
+- Configurar CORS apropiadamente para el dominio de producción
+- Implementar logging y monitoreo para el servidor
+
+## Licencia
+
+Este proyecto está bajo la licencia ISC, permitiendo uso comercial y modificación libre del código.
