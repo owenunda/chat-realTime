@@ -38,59 +38,7 @@ app.use(logger('dev'))
 // Mapa de usuarios conectados
 const connectedUsers = new Map()
 
-// Función para limpiar mensajes antiguos (más de 24 horas)
-async function cleanOldMessages() {
-  try {
-    const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000) // 24 horas en milisegundos
-    
-    console.log('🧹 Iniciando limpieza de mensajes antiguos...')
-    
-    // Limpiar mensajes públicos
-    const publicMessagesRef = db.ref('messages/public')
-    const publicSnapshot = await publicMessagesRef.orderByChild('timestamp').endAt(twentyFourHoursAgo).once('value')
-    
-    let publicDeleted = 0
-    const publicPromises = []
-    publicSnapshot.forEach(childSnapshot => {
-      publicPromises.push(childSnapshot.ref.remove())
-      publicDeleted++
-    })
-    await Promise.all(publicPromises)
-    
-    // Limpiar mensajes privados
-    const privateMessagesRef = db.ref('messages/private')
-    const privateRoomsSnapshot = await privateMessagesRef.once('value')
-    
-    let privateDeleted = 0
-    const privatePromises = []
-    
-    privateRoomsSnapshot.forEach(roomSnapshot => {
-      roomSnapshot.forEach(messageSnapshot => {
-        const message = messageSnapshot.val()
-        if (message.timestamp && message.timestamp <= twentyFourHoursAgo) {
-          privatePromises.push(messageSnapshot.ref.remove())
-          privateDeleted++
-        }
-      })
-    })
-    await Promise.all(privatePromises)
-    
-    if (publicDeleted > 0 || privateDeleted > 0) {
-      console.log(`✅ Limpieza completada: ${publicDeleted} mensajes públicos y ${privateDeleted} mensajes privados eliminados`)
-    } else {
-      console.log('✅ Limpieza completada: No hay mensajes antiguos para eliminar')
-    }
-    
-  } catch (error) {
-    console.error('❌ Error durante la limpieza de mensajes:', error)
-  }
-}
 
-// Ejecutar limpieza cada hora
-setInterval(cleanOldMessages, 60 * 60 * 1000) // Cada hora
-
-// Ejecutar limpieza inicial al iniciar el servidor
-setTimeout(cleanOldMessages, 5000) // Esperar 5 segundos después del inicio
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
@@ -132,7 +80,7 @@ io.on('connection', (socket) => {
       socket.emit('authenticated', { userId, username })
       
     } catch (error) {
-      console.error('❌ Error de autenticación:', error)
+      console.error('🚫 Error de autenticación:', error)
       socket.emit('auth error', 'Token inválido')
     }
   })
@@ -153,7 +101,7 @@ io.on('connection', (socket) => {
     // Guardar en Realtime Database
     await db.ref('messages/public').push(messageData)
     
-    console.log(`💬 ${socket.username}: ${data.message}`)
+    console.log(`� ${socket.username}: ${data.message}`)
   })
 
   // Mensaje privado
@@ -252,8 +200,6 @@ app.get('/chat', (req, res) => {
 // Iniciar servidor
 server.listen(port, () => {
   console.log(`🚀 Firebase Realtime Chat Server running on port ${port}`)
-  console.log(`📱 Accede a: http://localhost:${port}/chat`)
+  console.log(`🌐 Accede a: http://localhost:${port}/chat`)
   console.log(`🔥 Firebase Realtime Database URL: https://ouchat-realtime-1d262-default-rtdb.firebaseio.com`)
-  console.log(`🧹 Limpieza automática: Los mensajes se eliminan después de 24 horas`)
-  console.log(`⏰ Limpieza cada: 1 hora`)
 })
