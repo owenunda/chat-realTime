@@ -76,13 +76,13 @@ async function cleanOldMessages() {
     await Promise.all(privatePromises)
     
     if (publicDeleted > 0 || privateDeleted > 0) {
-      console.log(`✅ Limpieza completada: ${publicDeleted} mensajes públicos y ${privateDeleted} mensajes privados eliminados`)
+      console.log(` Limpieza completada: ${publicDeleted} mensajes públicos y ${privateDeleted} mensajes privados eliminados`)
     } else {
-      console.log('✅ Limpieza completada: No hay mensajes antiguos para eliminar')
+      console.log(' Limpieza completada: No hay mensajes antiguos para eliminar')
     }
     
   } catch (error) {
-    console.error('❌ Error durante la limpieza de mensajes:', error)
+    console.error(' Error durante la limpieza de mensajes:', error)
   }
 }
 
@@ -132,7 +132,7 @@ io.on('connection', (socket) => {
       socket.emit('authenticated', { userId, username })
       
     } catch (error) {
-      console.error('❌ Error de autenticación:', error)
+      console.error(' Error de autenticación:', error)
       socket.emit('auth error', 'Token inválido')
     }
   })
@@ -176,7 +176,7 @@ io.on('connection', (socket) => {
     // Guardar en Realtime Database
     await db.ref(`messages/private/${roomId}`).push(messageData)
     
-    console.log(`💌 ${socket.username} → ${recipientId}: ${message}`)
+    console.log(` ${socket.username} → ${recipientId}: ${message}`)
   })
 
   // Unirse a chat privado
